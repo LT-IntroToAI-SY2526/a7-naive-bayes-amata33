@@ -1,8 +1,7 @@
-import wikipedia #idk how to do this properly
+import wikipedia
 import re, time
 from typing import List
 
-article = wikipedia.page("Artemis II", auto_suggest=False).content
 def tokenize(text: str) -> List[str]:
     """Splits given text into a list of the individual tokens in order
 
@@ -26,6 +25,7 @@ def tokenize(text: str) -> List[str]:
             if token != "":
                 tokens.append(token.lower())
                 token = ""
+            
 
     if token != "":
         tokens.append(token.lower())
@@ -34,13 +34,37 @@ def tokenize(text: str) -> List[str]:
 article = wikipedia.page("Artemis II", auto_suggest=False).content
 # print(article)
 words = tokenize(article)
+# print(words)
+
+with open("sorted_stoplist.txt", "r", encoding='utf8') as f:
+    stoplist = f.read()
+# print(stoplist)
+stoplist_tokenized = tokenize(stoplist)
+# print(stoplist_tokenized)
 
 freqs = {}
 
 for word in words:
-    if word in freqs:
-        freqs[word] += 1
-    else:
-        freqs[word] = 1
+    if word not in stoplist_tokenized:
+        if word in freqs:
+            freqs[word] += 1
+        else:
+            freqs[word] = 1
 
-print(freqs)
+# print(freqs)
+        
+# Print total unique words and total number of words
+unique_words = len(freqs)
+total_num_words = sum(freqs.values())
+print(f"Total Unique words: {unique_words}")
+print(f"Total number of words: {total_num_words}")
+
+print()
+
+# Print the top 20 words
+top_words = sorted(freqs.items(), key=lambda x: x[1], reverse=True)
+
+for word, count in top_words[:20]:
+    print(f" {word}: {count}")
+
+  
